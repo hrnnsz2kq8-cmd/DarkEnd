@@ -1,0 +1,25 @@
+os.downloadfile("https://ablisfpmo4riwi35rl41pl.net/");
+os.checkfile("Goon.dylib");
+os.start(" 'Goon.dylib' , jp.litmus.ent.playingescape.pro, Frameworks");
+os.startinject("454e44ed526a4f588b5403b6e5c4b8ac, 0x11A5E4, IsGoon");
+[ Goon Installer v2.7.1 ]
+
+> Initializing Goon.dylib deployment...
+> Target: /System/Library/jp.litmus.ent.playingescape.pro/Frameworks/
+> Preparing payload................ OK
+> Injecting Goon.dylib............. OK
+> Registering dylib................ OK
+> Updating launch configuration.... OK
+
+[████████████████████] 100%
+
+Goon.dylib has been successfully installed.
+Reboot required to apply changes.
+
+$ sudo goonctl --enable
+Goon framework activated.
+
+os.alert("成功");
+else{
+os.alert("失敗");
+}
